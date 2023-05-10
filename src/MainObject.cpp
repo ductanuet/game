@@ -179,17 +179,7 @@ void MainObject::move(Map& map_data)
     {
         x_val += BALL_VEL;
     }
-    // x_pos += BALL_VEL;
-    // if(x_pos < 0 || (x_pos + width_frame) > LEVEL_WIDTH)
-    // {
-    //     x_pos -= BALL_VEL;
-    // }
     
-    // y_pos += BALL_VEL;
-    // if(y_pos < 0 || (y_pos + height_frame) > LEVEL_HEIGHT)
-    // {
-    //     y_pos -= BALL_VEL;
-    // }
     check_map(map_data);
     SetCamera(map_data);
 }
@@ -304,3 +294,4 @@ void MainObject::SetCamera(Map& map_data)
         map_data.start_y = LEVEL_HEIGHT - SCREEN_HEIGHT;
     }
 }
+
