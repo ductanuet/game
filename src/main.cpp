@@ -3,8 +3,11 @@
 #include "map.h"
 #include "MainObject.h"
 #include "Time.h"
+#include "Text.h"
 
 Texture background;
+TTF_Font* gFont = NULL;
+
 bool init()
 {
     bool success = true;
@@ -33,6 +36,15 @@ bool init()
             {
                 success = false;
             }
+        }
+        if(TTF_Init() == -1)
+        {
+            success = false;
+        }
+        gFont = TTF_OpenFont("KarmaFuture.ttf", 20 );
+        if( gFont == NULL)
+        {
+            success = false;
         }
     }
     return success;
@@ -82,6 +94,10 @@ int main(int argc, char *argv[])
 
     ball.set_clip();
 
+    //time text
+    Text time_game;
+    time_game.SetColor(Text::WHITE_TEXT);
+
     bool is_quit = false;
     while (!is_quit)
     {
@@ -114,7 +130,29 @@ int main(int argc, char *argv[])
         game_map_.SetMap(map_data);
         //game_map_.DrawMap(gscreen);
 
+        //SDL_RenderPresent(gscreen);
+
+        //show game's time
+        std::string str_time = "Time: ";
+        int time_val = SDL_GetTicks()/1000;
+        int val_time = 300 - time_val;
+        if(val_time <= 0)
+        {
+            //std::string str
+            is_quit = true;
+        }
+        else
+        {
+            std::string str_val = std::to_string(val_time);
+            str_time += str_val;
+
+            time_game.SetText(str_time);
+            time_game.LoadFromRenderText(gFont, gscreen);
+            time_game.RenderText(gscreen, SCREEN_WIDTH - 600, 20);
+        }
+
         SDL_RenderPresent(gscreen);
+
         int real_time = fps_time.get_ticks();
         int time_one_frame = 1000/FRAME_PER_SECOND;
         if( real_time < time_one_frame)
