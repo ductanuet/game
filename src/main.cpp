@@ -183,9 +183,10 @@ int main(int argc, char *argv[])
     time_game.SetColor(Text::WHITE_TEXT);
 
     bool is_quit = false;
+    Mix_PlayMusic( gMusic, -1 );
     while (!is_quit)
     {
-        Mix_PlayMusic( gMusic, -1 );
+        
         fps_time.start();
         while (SDL_PollEvent(&gEvent) != 0)
         {
