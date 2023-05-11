@@ -34,6 +34,10 @@ const int FRAME_PER_SECOND = 16;
 //toc do di chuyen
 const int BALL_VEL = 6;
 
+//mixer
+#define MIX_CHANNEL -1
+#define NOT_REPEATITIVE 0
+
 typedef struct Map
 {
     int start_x ;

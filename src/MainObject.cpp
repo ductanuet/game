@@ -106,6 +106,7 @@ void MainObject::HandleEvent(SDL_Event events, SDL_Renderer *screen)
             status_ = WALK;
             direction_ = UP;
             y_val -= BALL_VEL;
+            //Mix_PlayChannel(MIX_CHANNEL, gMove, NOT_REPEATITIVE);
         }
         break;
 
@@ -114,6 +115,7 @@ void MainObject::HandleEvent(SDL_Event events, SDL_Renderer *screen)
             status_ = WALK;
             direction_ = DOWN;
             y_val += BALL_VEL;
+            //Mix_PlayChannel(MIX_CHANNEL, gMove, NOT_REPEATITIVE);
         }
         break;
 
@@ -122,6 +124,7 @@ void MainObject::HandleEvent(SDL_Event events, SDL_Renderer *screen)
             status_ = WALK;
             direction_ = LEFT;
             x_val -= BALL_VEL;
+            //Mix_PlayChannel(MIX_CHANNEL, gMove, NOT_REPEATITIVE);
         }
         break;
 
@@ -130,6 +133,7 @@ void MainObject::HandleEvent(SDL_Event events, SDL_Renderer *screen)
             status_ = WALK;
             direction_ = RIGHT;
             x_val += BALL_VEL;
+            //Mix_PlayChannel(MIX_CHANNEL, gMove, NOT_REPEATITIVE);
         }
         break;
 

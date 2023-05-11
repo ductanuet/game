@@ -10,45 +10,57 @@ TTF_Font* gFont = NULL;
 
 bool init()
 {
+    // initialization flag
     bool success = true;
-    int ret = SDL_Init(SDL_INIT_VIDEO);
-    if (ret < 0)
-        return false;
 
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-
-    gWindow = SDL_CreateWindow("game maze", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-
-    if (gWindow == NULL)
+    // initialize SDL
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    {
+        printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
         success = false;
+    }
     else
     {
-        gscreen = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-        if (gscreen == NULL)
+        // set texture filltering to linear
+        if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
         {
+            printf("Warning: Linear texture filtering not enabled!");
+        }
+
+        // create window
+        gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+        if (gWindow == NULL)
+        {
+            printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
             success = false;
         }
         else
         {
-            SDL_SetRenderDrawColor(gscreen, 0xFF, 0xFF, 0xFF, 0xFF);
-            int imgFlags = IMG_INIT_PNG;
-            if (!(IMG_Init(imgFlags) && imgFlags))
+            // create renderer for window
+            gscreen = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+            if (gWindow == NULL)
             {
+                printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
                 success = false;
             }
-        }
-        if(TTF_Init() == -1)
-        {
-            success = false;
-        }
-        gFont = TTF_OpenFont("KarmaFuture.ttf", 20 );
-        if( gFont == NULL)
-        {
-            success = false;
+            else
+            {
+                // initialize renderer color
+                SDL_SetRenderDrawColor(gscreen, 0xFF, 0xFF, 0xFF, 0xFF);
+
+                // initialize PNG loading
+                int imgFlags = IMG_INIT_PNG;
+                if (!(IMG_Init(imgFlags) & imgFlags))
+                {
+                    printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+                    success = false;
+                }
+            }
         }
     }
     return success;
 }
+
 
 // bool loadBackground()
 // {

@@ -17,6 +17,7 @@ Texture::~Texture()
 
 bool Texture::LoadImg(std::string path, SDL_Renderer* screen)
 {
+    Free();
     SDL_Texture* new_texture = NULL;
 
     SDL_Surface* load_surface = IMG_Load(path.c_str());
