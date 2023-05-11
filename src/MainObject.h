@@ -37,6 +37,7 @@ public:
     void SetMapXY(const int map_x, const int map_y) {camera_x = map_x; camera_y = map_y;};
     void SetCamera(Map& map_data);
     //void UpdateImage(SDL_Renderer* des);
+    bool is_walk();
 
 private:
     //van toc theo truc Ox, Oy

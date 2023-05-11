@@ -12,7 +12,7 @@ TTF_Font* gFont = NULL;
 Mix_Music* gMusic = NULL;
 
 //sound move
-Mix_Music* SoundMove = NULL;
+Mix_Music* gMove = NULL;
 
 bool init()
 {
@@ -101,8 +101,8 @@ bool LoadMedia()
 		success = false;
 	}
 
-    SoundMove = Mix_LoadMUS( "sound_move.wav" );
-	if( SoundMove == NULL )
+    gMove = Mix_LoadMUS( "sound_move.wav" );
+	if( gMove == NULL )
 	{
 		printf( "Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError() );
 		success = false;
@@ -128,8 +128,8 @@ void close()
     SDL_DestroyRenderer(gscreen);
     gscreen = NULL;
 
-    Mix_FreeMusic(SoundMove);
-    SoundMove = NULL;
+    Mix_FreeMusic(gMove);
+    gMove = NULL;
 
     Mix_FreeMusic(gMusic);
     gMusic = NULL;
@@ -184,6 +184,10 @@ int main(int argc, char *argv[])
 
     bool is_quit = false;
     Mix_PlayMusic( gMusic, -1 );
+    if(ball.is_walk() == true) 
+    {
+        Mix_PlayMusic(gMove, -1);
+    }
     while (!is_quit)
     {
         
