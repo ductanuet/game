@@ -6,6 +6,8 @@
 #include "Text.h"
 
 Texture background;
+Texture win_game;
+
 TTF_Font* gFont = NULL;
 
 //music game
@@ -116,6 +118,14 @@ bool LoadMedia()
             printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
 		    success = false;
         }
+        else
+        {
+            if(!win_game.LoadImg("win_game.png", gscreen) )
+            {
+                printf("Failed to load win game image\n");
+				success = false;
+            }
+        }
     }
 
     return success;
@@ -208,51 +218,59 @@ int main(int argc, char *argv[])
         SDL_SetRenderDrawColor(gscreen, 0x00, 0x00, 0x00, 0xFF);
         SDL_RenderClear(gscreen);
 
-        background.Render(gscreen, NULL);
-
-        game_map_.DrawMap(gscreen);
-        Map map_data = game_map_.getMap();
-
-        ball.SetMapXY(map_data.start_x, map_data.start_y);
-        ball.move(map_data);
-        ball.show(gscreen);
-
-        game_map_.SetMap(map_data);
-        //game_map_.DrawMap(gscreen);
-
-        //SDL_RenderPresent(gscreen);
-
-        //show game's time
-        std::string str_time = "Time: ";
-        int time_val = SDL_GetTicks()/1000;
-        int val_time = 300 - time_val;
-        if(val_time <= 0)
+        if(ball.win() == true)
         {
-            //std::string str
-            is_quit = true;
+            win_game.Render(gscreen, NULL);
+            SDL_RenderPresent(gscreen);
         }
         else
         {
-            std::string str_val = std::to_string(val_time);
-            str_time += str_val;
+            background.Render(gscreen, NULL);
 
-            time_game.SetText(str_time);
-            time_game.LoadFromRenderText(gFont, gscreen);
-            time_game.RenderText(gscreen, SCREEN_WIDTH - 550, 30);
-        }
+            game_map_.DrawMap(gscreen);
+            Map map_data = game_map_.getMap();
 
-        SDL_RenderPresent(gscreen);
+            ball.SetMapXY(map_data.start_x, map_data.start_y);
+            ball.move(map_data);
+            ball.show(gscreen);
 
-        int real_time = fps_time.get_ticks();
-        int time_one_frame = 1000/FRAME_PER_SECOND;
-        if( real_time < time_one_frame)
-        {
-            int delay_time = time_one_frame - real_time;
-            SDL_Delay( delay_time );
-        }
-    }
-    close();
-    return 0;
+            game_map_.SetMap(map_data);
+            //game_map_.DrawMap(gscreen);
+
+            //SDL_RenderPresent(gscreen);
+
+            //show game's time
+            std::string str_time = "Time: ";
+            int time_val = SDL_GetTicks()/1000;
+            int val_time = 300 - time_val;
+            if(val_time <= 0)
+            {
+                //std::string str
+                is_quit = true;
+            }
+            else
+            {
+                std::string str_val = std::to_string(val_time);
+                str_time += str_val;
+
+                time_game.SetText(str_time);
+                time_game.LoadFromRenderText(gFont, gscreen);
+                time_game.RenderText(gscreen, SCREEN_WIDTH - 550, 30);
+            }
+
+            SDL_RenderPresent(gscreen);
+
+            int real_time = fps_time.get_ticks();
+            int time_one_frame = 1000/FRAME_PER_SECOND;
+            if( real_time < time_one_frame)
+            {
+                int delay_time = time_one_frame - real_time;
+                SDL_Delay( delay_time );
+            }
+          }
+        }  
+        close();
+        return 0;
     }
   }
 }

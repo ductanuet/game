@@ -13,6 +13,8 @@ MainObject::MainObject()
 
     camera_x = 0;
     camera_y = 0;
+
+    is_win = false;
 }
 
 MainObject::~MainObject()
@@ -203,19 +205,27 @@ void MainObject::check_map(Map& map_data)
     {
         if(x_val > 0)
         {
-            if(map_data.tile[y1][x2] != 0 || map_data.tile[y2][x2] != 0)
+            if(map_data.tile[y1][x2] == 1 || map_data.tile[y2][x2] == 1)
             {
                 x_pos = x2*TILE_SIZE;
                 x_pos -= width_frame + 1;
                 x_val = 0;
             }
+            if(map_data.tile[y1][x2] == 2 || map_data.tile[y2][x2] == 2)
+            {
+                is_win = true;
+            }
         }
         if(x_val < 0)
         {
-            if(map_data.tile[y1][x1] != 0 || map_data.tile[y2][x1] != 0)
+            if(map_data.tile[y1][x1] == 1 || map_data.tile[y2][x1] == 1)
             {
                 x_pos = (x1 + 1)*TILE_SIZE;
                 x_val = 0;
+            }
+            if(map_data.tile[y1][x1] == 2 || map_data.tile[y2][x1] == 2)
+            {
+                is_win = true;
             }
         }
     }
@@ -231,20 +241,28 @@ void MainObject::check_map(Map& map_data)
     {
         if(y_val > 0)
         {
-            if(map_data.tile[y2][x1] != 0 || map_data.tile[y2][x2] != 0)
+            if(map_data.tile[y2][x1] == 1 || map_data.tile[y2][x2] == 1)
             {
                 y_pos = y2*TILE_SIZE;
                 y_pos -= height_frame + 1;
                 y_val = 0;
             }
+            if(map_data.tile[y2][x1] == 2 || map_data.tile[y2][x2] == 2)
+            {
+                is_win = true;
+            }
         }
 
         if(y_val < 0)
         {
-            if(map_data.tile[y1][x1] != 0 || map_data.tile[y1][x2] != 0)
+            if(map_data.tile[y1][x1] == 1 || map_data.tile[y1][x2] == 1)
             {
                 y_pos = (y1 + 1)*TILE_SIZE;
                 y_val = 0;
+            }
+            if(map_data.tile[y1][x1] == 2 || map_data.tile[y1][x2] == 2)
+            {
+                is_win = true;
             }
         }
     }
@@ -298,4 +316,9 @@ void MainObject::SetCamera(Map& map_data)
 bool MainObject::is_walk()
 {
     return status_ != STAND;
+}
+
+bool MainObject::win()
+{
+    return is_win != false;
 }

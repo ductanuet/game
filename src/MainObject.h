@@ -38,6 +38,7 @@ public:
     void SetCamera(Map& map_data);
     //void UpdateImage(SDL_Renderer* des);
     bool is_walk();
+    bool win();
 
 private:
     //van toc theo truc Ox, Oy
@@ -60,6 +61,8 @@ private:
 
     int camera_x;
     int camera_y;
+
+    bool is_win;
      
 };
 
