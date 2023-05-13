@@ -4,6 +4,7 @@
 #include "MainObject.h"
 #include "Time.h"
 #include "Text.h"
+#include "Button.h"
 
 Texture background;
 Texture win_game;
@@ -103,12 +104,6 @@ bool LoadMedia()
 		success = false;
 	}
 
-    gMove = Mix_LoadMUS( "sound_move.wav" );
-	if( gMove == NULL )
-	{
-		printf( "Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError() );
-		success = false;
-	}
 
     else
     {
@@ -168,13 +163,10 @@ int main(int argc, char *argv[])
 	}
 	else
     {
-    //Mix_PlayMusic( gMusic, 6 );
+    
 
     Time fps_time;
-    // if (init() == false)
-    //     return -1;
-    // if (loadBackground() == false)
-    //     return -1;
+      return -1;
 
     GameMap game_map_;
     game_map_.LoadMap("maze1.txt");
@@ -194,10 +186,7 @@ int main(int argc, char *argv[])
 
     bool is_quit = false;
     Mix_PlayMusic( gMusic, -1 );
-    if(ball.is_walk() == true) 
-    {
-        Mix_PlayMusic(gMove, -1);
-    }
+    
     while (!is_quit)
     {
         
@@ -270,7 +259,8 @@ int main(int argc, char *argv[])
           }
         }  
         close();
-        return 0;
+        
     }
   }
+  return 0;
 }

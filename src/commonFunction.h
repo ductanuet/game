@@ -38,6 +38,15 @@ const int BALL_VEL = 6;
 #define MIX_CHANNEL -1
 #define NOT_REPEATITIVE 0
 
+//Button constants
+const int BUTTON_WIDTH = 300;
+const int BUTTON_HEIGHT = 200;
+const int TOTAL_BUTTONS = 4;
+//
+//const int mCurrentSprite = 
+// SDL_Rect gSpriteClips[ BUTTON_SPRITE_TOTAL ];
+// Texture gButtonSpriteSheetTexture;
+
 typedef struct Map
 {
     int start_x ;
