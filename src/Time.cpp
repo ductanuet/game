@@ -24,6 +24,9 @@ void Time::stop()
 {
     is_paused_ = false;
     is_started_ = false;
+
+    start_tick = 0;
+    paused_tick = 0;
 }
 
 void Time::paused()
