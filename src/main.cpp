@@ -8,6 +8,7 @@
 
 Texture background;
 Texture win_game;
+Texture lose_game;
 
 TTF_Font* gFont = NULL;
 
@@ -120,6 +121,11 @@ bool LoadMedia()
                 printf("Failed to load win game image\n");
 				success = false;
             }
+            if(!lose_game.LoadImg("game_over1.png", gscreen) )
+            {
+                printf("Failed to load lose game image\n");
+				success = false;
+            }
         }
     }
 
@@ -166,7 +172,7 @@ int main(int argc, char *argv[])
     
 
     Time fps_time;
-      return -1;
+    
 
     GameMap game_map_;
     game_map_.LoadMap("maze1.txt");
@@ -231,11 +237,13 @@ int main(int argc, char *argv[])
             //show game's time
             std::string str_time = "Time: ";
             int time_val = SDL_GetTicks()/1000;
-            int val_time = 300 - time_val;
+            int val_time = 5 - time_val;
             if(val_time <= 0)
             {
                 //std::string str
-                is_quit = true;
+                lose_game.Render(gscreen, NULL);
+                
+                SDL_RenderPresent(gscreen);
             }
             else
             {
@@ -259,8 +267,8 @@ int main(int argc, char *argv[])
           }
         }  
         close();
-        
+        return 0;
     }
   }
-  return 0;
+  
 }
