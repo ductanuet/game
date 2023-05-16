@@ -11,7 +11,9 @@ enum gameStateEnum
     MENU = 0,
     PLAY = 1,
     HELP = 2,
-    END = 3
+    WIN = 3,
+    LOSE = 4,
+    END = 5
 };
 
 int gameState = MENU;
@@ -25,14 +27,14 @@ TTF_Font *gFont = NULL;
 
 // music game
 Mix_Music *gMusic = NULL;
-//music menu
+// music menu
 Mix_Music *gMenu = NULL;
 // sound win
-Mix_Chunk *gWin = NULL;
-//sound lose
-Mix_Chunk *gLose = NULL;
+Mix_Music *gWin = NULL;
+// sound lose
+Mix_Music *gLose = NULL;
 
-//time
+// time
 Time fps_time;
 
 bool init()
@@ -101,52 +103,51 @@ bool init()
     return success;
 }
 
-
 bool LoadMedia()
 {
     bool success = true;
 
-    gMusic = Mix_LoadMUS( "sound/sound_game.wav" );
-	if( gMusic == NULL )
-	{
-		printf( "Failed to load game music! SDL_mixer Error: %s\n", Mix_GetError() );
-		success = false;
-	}
+    gMusic = Mix_LoadMUS("sound/sound_game.wav");
+    if (gMusic == NULL)
+    {
+        printf("Failed to load game music! SDL_mixer Error: %s\n", Mix_GetError());
+        success = false;
+    }
     gMenu = Mix_LoadMUS("sound/sound_menu.wav");
-    if(gMenu == NULL)
+    if (gMenu == NULL)
     {
-        printf( "Failed to load menu music! SDL_mixer Error: %s\n", Mix_GetError() );
-		success = false;
+        printf("Failed to load menu music! SDL_mixer Error: %s\n", Mix_GetError());
+        success = false;
     }
-    gWin = Mix_LoadWAV("sound/win_sound.wav");
-    if(gWin == NULL)
+    gWin = Mix_LoadMUS("sound/win_sound.wav");
+    if (gWin == NULL)
     {
-        printf( "Failed to load win music! SDL_mixer Error: %s\n", Mix_GetError() );
-		success = false;
+        printf("Failed to load win music! SDL_mixer Error: %s\n", Mix_GetError());
+        success = false;
     }
-    gLose = Mix_LoadWAV("sound/game_over.wav");
+    gLose = Mix_LoadMUS("sound/game_over.wav");
     if (gLose == NULL)
     {
-        printf( "Failed to load game over music! SDL_mixer Error: %s\n", Mix_GetError() );
-		success = false;
+        printf("Failed to load game over music! SDL_mixer Error: %s\n", Mix_GetError());
+        success = false;
     }
-    
+
     else
     {
         gFont = TTF_OpenFont("font/KarmaFuture.ttf", 20);
-        if(gFont == NULL)
+        if (gFont == NULL)
         {
-            printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
-		    success = false;
+            printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
+            success = false;
         }
         else
         {
-            if(!win_game.LoadImg("image/screen/win_game.png", gscreen) )
+            if (!win_game.LoadImg("image/screen/win_game.png", gscreen))
             {
                 printf("Failed to load win game image\n");
-				success = false;
+                success = false;
             }
-            if(!game_over.LoadImg("image/screen/game_over1.png", gscreen) )
+            if (!game_over.LoadImg("image/screen/game_over1.png", gscreen))
             {
                 printf("Failed to load game over image\n");
                 success = false;
@@ -170,10 +171,10 @@ void close()
     Mix_FreeMusic(gMusic);
     gMusic = NULL;
 
-    Mix_FreeChunk(gWin);
+    Mix_FreeMusic(gWin);
     gWin == NULL;
 
-    Mix_FreeChunk(gLose);
+    Mix_FreeMusic(gLose);
     gLose == NULL;
 
     SDL_DestroyWindow(gWindow);
@@ -209,7 +210,7 @@ void game()
 
     bool is_quit = false;
     Mix_PlayMusic(gMusic, -1);
-    
+
     while (!is_quit)
     {
 
@@ -228,52 +229,90 @@ void game()
         SDL_SetRenderDrawColor(gscreen, 0x00, 0x00, 0x00, 0xFF);
         SDL_RenderClear(gscreen);
 
-        if(ball.win() == true)
+        if (ball.win() == true)
         {
             Mix_HaltMusic();
-            win_game.Render(gscreen, NULL);
-            Mix_PlayChannel(-1, gWin, 0);
+            gameState = WIN;
+            is_quit = true;
+        }
+        else
+        {
+
+            background.Render(gscreen, NULL);
+
+            game_map_.DrawMap(gscreen);
+            Map map_data = game_map_.getMap();
+
+            ball.SetMapXY(map_data.start_x, map_data.start_y);
+            ball.move(map_data);
+            ball.show(gscreen);
+
+            game_map_.SetMap(map_data);
+            // game_map_.DrawMap(gscreen);
+
+            // SDL_RenderPresent(gscreen);
+
+            // show game's time
+            std::string str_time = "Time: ";
+
+            int time_val = game_time.get_ticks() / 1000;
+            int val_time = 360 - time_val;
+            if (val_time <= 0)
+            {
+                Mix_HaltMusic();
+                gameState = LOSE;
+                is_quit = true;
+            }
+            else
+            {
+                std::string str_val = std::to_string(val_time);
+                str_time += str_val;
+
+                time_game.SetText(str_time);
+                time_game.LoadFromRenderText(gFont, gscreen);
+                time_game.RenderText(gscreen, SCREEN_WIDTH - 550, 30);
+            }
+
             SDL_RenderPresent(gscreen);
+
+            int real_time = fps_time.get_ticks();
+            int time_one_frame = 1000 / FRAME_PER_SECOND;
+            if (real_time < time_one_frame)
+            {
+                int delay_time = time_one_frame - real_time;
+                SDL_Delay(delay_time);
+            }
+
+            if (gameState != PLAY)
+            {
+                is_quit = true;
+            }
         }
-        else
+    }
+}
+
+void win()
+{
+    bool is_quit = false;
+    Mix_PlayMusic(gLose, -1);
+
+    while (!is_quit)
+    {
+
+        fps_time.start();
+        while (SDL_PollEvent(&gEvent) != 0)
         {
-
-        background.Render(gscreen, NULL);
-
-        game_map_.DrawMap(gscreen);
-        Map map_data = game_map_.getMap();
-
-        ball.SetMapXY(map_data.start_x, map_data.start_y);
-        ball.move(map_data);
-        ball.show(gscreen);
-
-        game_map_.SetMap(map_data);
-        // game_map_.DrawMap(gscreen);
-
-        // SDL_RenderPresent(gscreen);
-
-        // show game's time
-        std::string str_time = "Time: ";
-        
-        int time_val = game_time.get_ticks() / 1000;
-        int val_time = 360 - time_val;
-        if (val_time <= 0)
-        {
-            Mix_HaltMusic();
-            game_over.Render(gscreen, NULL);
-            Mix_PlayChannel(-1, gLose, 1);
-            //is_quit = true;
-        }
-        else
-        {
-            std::string str_val = std::to_string(val_time);
-            str_time += str_val;
-
-            time_game.SetText(str_time);
-            time_game.LoadFromRenderText(gFont, gscreen);
-            time_game.RenderText(gscreen, SCREEN_WIDTH - 550, 30);
+            if (gEvent.type == SDL_QUIT)
+            {
+                gameState = END;
+                is_quit = true;
+            }
         }
 
+        SDL_SetRenderDrawColor(gscreen, 0x00, 0x00, 0x00, 0xFF);
+        SDL_RenderClear(gscreen);
+
+        win_game.Render(gscreen, NULL);
         SDL_RenderPresent(gscreen);
 
         int real_time = fps_time.get_ticks();
@@ -284,13 +323,58 @@ void game()
             SDL_Delay(delay_time);
         }
 
-        if (gameState != PLAY)
+        if (gameState != WIN)
         {
             is_quit = true;
         }
-      }
     }
 }
+
+void lose()
+{
+    bool is_quit = false;
+    Mix_PlayMusic(gLose, -1);
+
+    while (!is_quit)
+    {
+
+        fps_time.start();
+        while (SDL_PollEvent(&gEvent) != 0)
+        {
+            if (gEvent.type == SDL_QUIT)
+            {
+                gameState = END;
+                is_quit = true;
+            }
+
+            if (gEvent.type == SDL_KEYDOWN && gEvent.key.keysym.sym == SDLK_SPACE)
+            {
+                gameState = PLAY;
+                is_quit = true;
+            }
+        }
+
+        SDL_SetRenderDrawColor(gscreen, 0x00, 0x00, 0x00, 0xFF);
+        SDL_RenderClear(gscreen);
+
+        game_over.Render(gscreen, NULL);
+        SDL_RenderPresent(gscreen);
+
+        int real_time = fps_time.get_ticks();
+        int time_one_frame = 1000 / FRAME_PER_SECOND;
+        if (real_time < time_one_frame)
+        {
+            int delay_time = time_one_frame - real_time;
+            SDL_Delay(delay_time);
+        }
+
+        if (gameState != LOSE)
+        {
+            is_quit = true;
+        }
+    }
+}
+
 
 void menu()
 {
@@ -305,7 +389,7 @@ void menu()
     bool is_quit = false;
     while (!is_quit)
     {
-        //fps_time.start();
+        // fps_time.start();
 
         while (SDL_PollEvent(&gEvent) != 0)
         {
@@ -363,6 +447,14 @@ void manageState()
         // {
         //     help();
         // }
+        else if (gameState == WIN)
+        {
+            win();
+        }
+        else if (gameState == LOSE)
+        {
+            lose();
+        }
         else if (gameState == END)
             break;
     }
