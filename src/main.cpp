@@ -248,9 +248,6 @@ void game()
             ball.show(gscreen);
 
             game_map_.SetMap(map_data);
-            // game_map_.DrawMap(gscreen);
-
-            // SDL_RenderPresent(gscreen);
 
             // show game's time
             std::string str_time = "Time: ";
@@ -335,6 +332,7 @@ void lose()
     bool is_quit = false;
     Mix_PlayMusic(gLose, -1);
 
+    
     while (!is_quit)
     {
 
@@ -358,6 +356,14 @@ void lose()
         SDL_RenderClear(gscreen);
 
         game_over.Render(gscreen, NULL);
+
+        Text lose;
+        lose.SetColor(Text::WHITE_TEXT);
+        std::string str_lose = "Press the ""space"" button to play again or the ""esc"" button to exit the game";
+        lose.SetText(str_lose);
+        lose.LoadFromRenderText(gFont, gscreen);
+        lose.RenderText(gscreen, SCREEN_WIDTH - 870, 700);
+
         SDL_RenderPresent(gscreen);
 
         int real_time = fps_time.get_ticks();

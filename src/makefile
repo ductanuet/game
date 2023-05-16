@@ -1,13 +1,13 @@
 OBJS = $(wildcard *.cpp)
 
 #CC specifies which compiler we're using
-CC = g++
+CC = g++ -std=c11
 
 #INCLUDE_PATHS specifies the additional include paths we'll need
-INCLUDE_PATHS = -IC:\SDL\SDL2-2.26.3\x86_64-w64-mingw32\include\SDL2
+INCLUDE_PATHS = -Iinclude
 
 #LIBRARY_PATHS specifies the additional library paths we'll need
-LIBRARY_PATHS = -LC:\SDL\SDL2-2.26.3\x86_64-w64-mingw32\lib
+LIBRARY_PATHS = -Llib
 
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings
@@ -23,3 +23,4 @@ OBJ_NAME = the_escape.exe
 #This is the target that compiles our executable
 all : $(OBJS)
 	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
+	the_escape.exe
