@@ -253,7 +253,7 @@ void game()
             std::string str_time = "Time: ";
 
             int time_val = game_time.get_ticks() / 1000;
-            int val_time = 360 - time_val;
+            int val_time = 500 - time_val;
             if (val_time <= 0)
             {
                 Mix_HaltMusic();
